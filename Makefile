@@ -1,4 +1,4 @@
-# Makefile for Rip-Eval
+# Makefile for R
 # @author John Wilander & Nick Nikiforakis
 
 #Depending on how you test your system you may want to comment, or uncomment
