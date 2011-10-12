@@ -1,4 +1,4 @@
-# Makefile for R
+# Makefile for RIPE
 # @author John Wilander & Nick Nikiforakis
 
 #Depending on how you test your system you may want to comment, or uncomment
