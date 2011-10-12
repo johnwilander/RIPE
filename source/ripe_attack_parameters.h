@@ -1,3 +1,17 @@
+/* RIPE was originally developed by John Wilander (@johnwilander)
+ * and was debugged and extended by Nick Nikiforakis (@nicknikiforakis)
+ *
+ * Released under the MIT license (see file named LICENSE)
+ *
+ * This program is part the paper titled
+ * RIPE: Runtime Intrusion Prevention Evaluator 
+ * Authored by: John Wilander, Nick Nikiforakis, Yves Younan,
+ *              Mariam Kamkar and Wouter Joosen
+ * Published in the proceedings of ACSAC 2011, Orlando, Florida
+ *
+ * Please cite accordingly.
+ */
+
 /**
  * @author John Wilander
  * 2007-01-16

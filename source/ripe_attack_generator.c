@@ -1,15 +1,16 @@
-/* RIPE was originally developed by John Wilander and was debugged and extended 
- * by Nick Nikiforakis
+/* RIPE was originally developed by John Wilander (@johnwilander)
+ * and was debugged and extended by Nick Nikiforakis (@nicknikiforakis)
+ *
+ * Released under the MIT license (see file named LICENSE)
  *
  * This program is part the paper titled
  * RIPE: Runtime Intrusion Prevention Evaluator 
- * by: John Wilander, Nick Nikiforakis, Yves Younan, Mariam Kamkar and Wouter Joosen
- * published in the proceedings of ACSAC 2011
+ * Authored by: John Wilander, Nick Nikiforakis, Yves Younan,
+ *              Mariam Kamkar and Wouter Joosen
+ * Published in the proceedings of ACSAC 2011, Orlando, Florida
  *
- * please cite accordingly
- *
+ * Please cite accordingly.
  */
-
 
 #include "ripe_attack_generator.h"
 
