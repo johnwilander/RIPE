@@ -307,7 +307,6 @@ void perform_attack(FILE *output_stream,
   /* Target: Pointer in BSS segment for indirect attack                     */
   /* Declared after injection buffers to place it "after" in the BSS seg    */
   static long bss_dummy_value;
-  static long *bss_mem_ptr;
   /* Target: Function pointer in BSS segment                                */
   /* Declared after injection buffers to place it "after" in the BSS seg    */
   static int (*bss_func_ptr)(const char *);
@@ -323,6 +322,7 @@ void perform_attack(FILE *output_stream,
   static jmp_buf bss_jmp_buffer_indirect;
 
   static struct attackme bss_struct;
+  static long *bss_mem_ptr;
   
 
 
