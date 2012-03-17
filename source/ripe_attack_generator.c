@@ -293,7 +293,7 @@ void perform_attack(FILE *output_stream,
   /* Target: Function pointer on heap                                       */
   /* This pointer is set by collecting a pointer value in the function      */
   /* pointer array.                                                         */
-  int (*heap_func_ptr)(const char *);
+  int (**heap_func_ptr)(const char *) = 0;
   /* Target: Longjmp buffer on the heap                                     */
   /* Declared after injection buffers to place it "after" on the heap       */
   //jmp_buf heap_jmp_buffer;
@@ -471,6 +471,10 @@ void perform_attack(FILE *output_stream,
     exit(1);
     break;
   }
+
+  //make sure we actually have an initialized function pointer on the heap
+  if (heap_func_ptr)
+    *heap_func_ptr = fooz;
 
   /************************************/
   /* Set target address for overflow, */
@@ -1030,8 +1034,7 @@ void perform_attack(FILE *output_stream,
 
     case FUNC_PTR_HEAP:
       // Get the function pointer stored in the overflown heap buffer
-      heap_func_ptr = (void *)(*((long *)heap_func_ptr));
-      ((int (*)(char *,int))heap_func_ptr)("/tmp/rip-eval/f_xxxx",700);
+      ((int (*)(char *,int))*heap_func_ptr)("/tmp/rip-eval/f_xxxx",700);
       break;
 
     case FUNC_PTR_BSS:
