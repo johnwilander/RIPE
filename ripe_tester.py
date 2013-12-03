@@ -67,7 +67,7 @@ for attack in attacks:
 						i += 1
 
 						os.system("rm /tmp/ripe_log")
-						cmdline = "./build/ripe_attack_generator -t "+tech+" -i "+attack+" -c " + ptr + "  -l " + loc +" -f " + func + " &> /tmp/ripe_log"
+						cmdline = "./build/ripe_attack_generator -t "+tech+" -i "+attack+" -c " + ptr + "  -l " + loc +" -f " + func + " > /tmp/ripe_log 2>&1"
 						os.system(cmdline)
 						log = open("/tmp/ripe_log","r")
 		

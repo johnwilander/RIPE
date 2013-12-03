@@ -93,7 +93,6 @@ struct attackme{
 int main(int argc, char **argv);
 
 void perform_attack(FILE *output_stream,
-		    int dummy_for_offset,
 		    int (*stack_func_ptr_param)(const char *),
 		    jmp_buf stack_jmp_buffer_param);
 
