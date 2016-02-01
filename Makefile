@@ -13,6 +13,6 @@ clean:
 
 # ATTACK GENERATOR COMPILE
 ripe_attack_generator: ./source/ripe_attack_generator.c
-	${CC} ${CFLAGS} ./source/ripe_attack_generator.c -o ./build/ripe_attack_generator 
+	${CC} ${CFLAGS} ./source/ripe_attack_generator.c -m32 -o ./build/ripe_attack_generator 
 	
 
