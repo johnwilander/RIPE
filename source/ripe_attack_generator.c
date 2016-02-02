@@ -313,7 +313,8 @@ void perform_attack(FILE *output_stream,
   /* Target: Longjmp buffer in BSS segment                                  */
   /* Declared after injection buffers to place it "after" in the BSS seg    */
   static jmp_buf bss_jmp_buffer;
-  static char placeholder[128]; //NN provide enough space for shellcode 
+  static long *bss_mem_ptr;
+  static char placeholder[128]; //NN provide enough space for shellcode
   /* BSS buffers to inject into                                             */
   /* Two buffers declared to be able to chose buffer address without NUL    */
   /* Largest buffer declared last since it'll be "after" in the BSS seg     */
@@ -322,7 +323,6 @@ void perform_attack(FILE *output_stream,
   static jmp_buf bss_jmp_buffer_indirect;
 
   static struct attackme bss_struct;
-  static long *bss_mem_ptr;
   
 
 
@@ -389,7 +389,7 @@ void perform_attack(FILE *output_stream,
     // Also set the location of the function pointer and the
     // longjmp buffer on the heap (the same since only choose one)
     heap_func_ptr = (void *)heap_buffer1;
-    //    heap_jmp_buffer = (void *)heap_buffer1;
+    heap_jmp_buffer = (void *)heap_buffer1;
     break;
   case HEAP:
     /* Injection into heap buffer                            */
@@ -439,7 +439,7 @@ void perform_attack(FILE *output_stream,
     // Also set the location of the function pointer and the
     // longjmp buffer on the heap (the same since only choose one)
     heap_func_ptr = (void *)heap_buffer1;
-    //    heap_jmp_buffer = (int *)heap_buffer1;
+    heap_jmp_buffer = (int *)heap_buffer1;
     break;
   case DATA:
     /* Injection into data segment buffer                    */
@@ -462,7 +462,7 @@ void perform_attack(FILE *output_stream,
     // Also set the location of the function pointer and the
     // longjmp buffer on the heap (the same since only choose one)
     heap_func_ptr = (void *)heap_buffer1;
-    //    heap_jmp_buffer = heap_buffer1;
+    heap_jmp_buffer = heap_buffer1;
     break;
   default:
     if(output_error_msg) {
@@ -602,7 +602,7 @@ void perform_attack(FILE *output_stream,
     payload.stack_jmp_buffer_param = &stack_jmp_buffer_param;
     break;
   case LONGJMP_BUF_HEAP:
-    if(setjmp(heap_jmp_buffer) != 0) {
+    if(setjmp(*heap_jmp_buffer) != 0) {
     /* setjmp() returns 0 if returning directly and non-zero when returning */
     /* from longjmp() using the saved context. Attack failed.               */
       return;
@@ -1055,7 +1055,7 @@ void perform_attack(FILE *output_stream,
       longjmp(stack_jmp_buffer_param, 1);
       break;
     case LONGJMP_BUF_HEAP:
-      longjmp(heap_jmp_buffer, 1);
+      longjmp(*heap_jmp_buffer, 1);
       break;
     case LONGJMP_BUF_BSS:
       /* NN: Indirect jmping needs to be treated differently */
