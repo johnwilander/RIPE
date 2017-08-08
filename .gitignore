@@ -1,0 +1,3 @@
+# Ignore contents of the build directory
+build/*
+!build/placeholder
