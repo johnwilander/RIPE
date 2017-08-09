@@ -1,0 +1,3 @@
+# Ensure that the fscanf temporary file is not added to the repository after
+# running the benchmark.
+fscanf_temp_file

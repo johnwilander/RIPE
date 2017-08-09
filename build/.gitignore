@@ -1,0 +1,7 @@
+# This .gitignore has a dual purpose:
+# 1. Ensure that the build directory is kept in the repository
+#    without the need for a placeholder file
+# 2. Ignore everything produced in this directory as part of the build ...
+*
+# ... except this file
+!.gitignore

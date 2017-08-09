@@ -8,11 +8,8 @@ CC=gcc
 all: ripe_attack_generator
 
 clean:
-	rm ./build/*
-
+	rm -f fscanf_temp_file ./build/ripe_attack_generator
 
 # ATTACK GENERATOR COMPILE
 ripe_attack_generator: ./source/ripe_attack_generator.c
-	${CC} ${CFLAGS} ./source/ripe_attack_generator.c -m32 -o ./build/ripe_attack_generator 
-	
-
+	${CC} ${CFLAGS} ./source/ripe_attack_generator.c -m32 -o ./build/ripe_attack_generator
