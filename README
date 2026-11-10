@@ -1,6 +1,6 @@
 This repo contains the source code for Wilander and Nikiforakis' runtime intrusion prevention evaluator RIPE.
 
-RIPE will be/was presented at The 27th Annual Computer Security Applications Conference (ACSAC) in Orlando, Florida, December 5-9, 2011.
+RIPE was presented at The 27th Annual Computer Security Applications Conference (ACSAC) in Orlando, Florida, December 5-9, 2011.
 
 RIPE is free software and released under the MIT licence (see file named LICENSE).
 
@@ -15,9 +15,9 @@ If you use, extend or build upon RIPE we kindly ask you to cite the original ACS
 }
 
 John's ...
-tweets https://twitter.com/johnwilander
-résumé http://johnwilander.se
-music  http://johnwilander.com
+Mastodon https://mastodon.social/@wilander
+Bluesky  https://bsky.app/profile/wilander.bsky.social
+Novels   https://hackerfiction.net
 
 Nick's
 tweets https://twitter.com/nicknikiforakis
